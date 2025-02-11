@@ -15,10 +15,7 @@ import {
 import type { GeoJsonObject, Feature, GeoJsonProperties } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 
-// Define la interfaz para las propiedades del feature (usada para nuestros datos)
-interface ProvinceProperties {
-  province: string;
-}
+
 
 // 🚗 Datos de accidentes por provincia en 2023
 const accidentData: Record<string, { Total: number }> = {
@@ -72,7 +69,8 @@ const interpolateColor = (
 };
 
 // 🚗 Mortalidad histórica por provincia (2005-2022)
-const accidentHistory = {
+// Se define con un índice string para poder usar accidentHistory[province]
+const accidentHistory: Record<string, (number | null)[]> = {
   "Pinar del Rio": [47, 51, 45, 48, 32, 51, 23, 31, 29, 29, 35, 36, 38, 26, 28, 17, 22, 34],
   Artemisa: [null, null, null, null, null, null, 25, 36, 36, 20, 55, 158, 40, 40, 36, 27, 27, 43],
   "La Habana": [70, 60, 65, 57, 65, 63, 145, 152, 121, 160, 152, 39, 116, 123, 102, 76, 80, 115],
@@ -221,8 +219,9 @@ export default function CubaChart() {
               data={years.map((year, i) => {
                 const dataPoint: ChartDataPoint = { year };
                 selectedProvinces.forEach((province) => {
+                  // Se fuerza el tipo con "as number" ya que en accidentHistory pueden existir nulls
                   dataPoint[province] =
-                    accidentHistory[province]?.[i] ?? 0;
+                    (accidentHistory[province]?.[i] ?? 0) as number;
                 });
                 return dataPoint;
               })}
@@ -236,9 +235,7 @@ export default function CubaChart() {
                   key={province}
                   type="monotone"
                   dataKey={province}
-                  stroke={
-                    provinceColors[index % provinceColors.length]
-                  }
+                  stroke={provinceColors[index % provinceColors.length]}
                 />
               ))}
             </LineChart>
