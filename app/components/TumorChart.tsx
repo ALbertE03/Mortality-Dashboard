@@ -86,29 +86,33 @@ export default function TumorChart() {
     "Tráquea, bronquios y pulmón",
   ]);
 
-  const ageGroups = ["20-39", "40-59", "60-79", "80+"];
-  const colors = [
-    "#4A90E2",
-    "#E94E77",
-    "#50E3C2",
-    "#F5A623",
-    "#B8E986",
-    "#D0021B",
-    "#8B572A",
-    "#BD10E0",
-    "#417505",
-    "#F8E71C",
-    "#7ED321",
-    "#B3B3B3",
-    "#4A4A4A",
-    "#D0011B",
-    "#9B9B9B",
-    "#F5A623",
-    "#5A0ED2",
-    "#E93E24",
-    "#FF8800",
-    "#00CC33",
-  ];
+  // Usamos useMemo para que las arrays se inicialicen una sola vez
+  const ageGroups = useMemo(() => ["20-39", "40-59", "60-79", "80+"], []);
+  const colors = useMemo(
+    () => [
+      "#4A90E2",
+      "#E94E77",
+      "#50E3C2",
+      "#F5A623",
+      "#B8E986",
+      "#D0021B",
+      "#8B572A",
+      "#BD10E0",
+      "#417505",
+      "#F8E71C",
+      "#7ED321",
+      "#B3B3B3",
+      "#4A4A4A",
+      "#D0011B",
+      "#9B9B9B",
+      "#F5A623",
+      "#5A0ED2",
+      "#E93E24",
+      "#FF8800",
+      "#00CC33",
+    ],
+    []
+  );
 
   // Filtrar o combinar datos según el sexo seleccionado
   const filteredData = useMemo(() => {
@@ -120,7 +124,7 @@ export default function TumorChart() {
       totalData[key] = maleData[key].map((val, i) => val + femaleData[key][i]);
     });
     return totalData;
-  }, [selectedSex, allCancerKeys]);
+  }, [selectedSex]);
 
   // Alternar selección de cáncer
   const toggleCancerSelection = (cancer: string) => {
@@ -153,6 +157,7 @@ export default function TumorChart() {
   }, [selectedCancers, filteredData, ageGroups, colors]);
 
   // Opciones para el gráfico de barras (incluyendo estilo para modo oscuro)
+  // Se modifica el tooltip para que en ambos modos el texto sea blanco.
   const barOptions = useMemo(() => {
     return {
       scales: {
@@ -182,9 +187,9 @@ export default function TumorChart() {
           },
         },
         tooltip: {
-          titleColor: darkMode ? "#FFFFFF" : "#000000",
-          bodyColor: darkMode ? "#FFFFFF" : "#000000",
-          footerColor: darkMode ? "#FFFFFF" : "#000000",
+          titleColor: "#FFFFFF",
+          bodyColor: "#FFFFFF",
+          footerColor: "#FFFFFF",
         },
       },
     };
@@ -208,7 +213,7 @@ export default function TumorChart() {
     };
   }, [selectedCancers, filteredData, colors]);
 
-  // Opciones para el gráfico de pastel: en modo claro y oscuro, el tooltip tendrá letras blancas
+  // Opciones para el gráfico de pastel: en modo claro y oscuro, el tooltip tendrá el texto en blanco
   const pieOptions = useMemo(() => {
     return {
       plugins: {
@@ -228,14 +233,13 @@ export default function TumorChart() {
               return labelName + ": " + percentage;
             },
           },
-          // En ambos modos, el tooltip mostrará el texto en blanco
           titleColor: "#FFFFFF",
           bodyColor: "#FFFFFF",
           footerColor: "#FFFFFF",
         },
       },
     };
-  }, [darkMode, colors]);
+  }, []);
 
   return (
     <div className="p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg">

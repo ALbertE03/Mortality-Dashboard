@@ -7,7 +7,7 @@ export default function Home() {
 
   useEffect(() => {
     router.push("/dashboard"); // Redirect to /dashboard
-  }, []);
+  }, [router]); // Agregamos router como dependencia
 
   return null; // Avoid rendering anything
 }
