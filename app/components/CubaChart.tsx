@@ -12,10 +12,13 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import type { GeoJsonObject, Feature, GeoJsonProperties } from "geojson";
+import type { GeoJsonObject, Feature, GeoJsonProperties, Geometry } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 
-
+// Define la interfaz para las propiedades del feature
+interface ProvinceProperties {
+  province: string;
+}
 
 // 🚗 Datos de accidentes por provincia en 2023
 const accidentData: Record<string, { Total: number }> = {
@@ -69,7 +72,7 @@ const interpolateColor = (
 };
 
 // 🚗 Mortalidad histórica por provincia (2005-2022)
-// Se define con un índice string para poder usar accidentHistory[province]
+// Se define usando Record<string, (number | null)[]> para permitir indexación con cualquier cadena.
 const accidentHistory: Record<string, (number | null)[]> = {
   "Pinar del Rio": [47, 51, 45, 48, 32, 51, 23, 31, 29, 29, 35, 36, 38, 26, 28, 17, 22, 34],
   Artemisa: [null, null, null, null, null, null, 25, 36, 36, 20, 55, 158, 40, 40, 36, 27, 27, 43],
@@ -154,7 +157,7 @@ export default function CubaChart() {
           <GeoJSON
             data={geoData}
             style={(
-              feature?: Feature<any, GeoJsonProperties>
+              feature?: Feature<Geometry, ProvinceProperties>
             ): PathOptions => {
               if (
                 !feature ||
@@ -175,7 +178,7 @@ export default function CubaChart() {
               };
             }}
             onEachFeature={(
-              feature: Feature<any, GeoJsonProperties>,
+              feature: Feature<Geometry, ProvinceProperties>,
               layer: Layer
             ) => {
               if (
@@ -219,7 +222,6 @@ export default function CubaChart() {
               data={years.map((year, i) => {
                 const dataPoint: ChartDataPoint = { year };
                 selectedProvinces.forEach((province) => {
-                  // Se fuerza el tipo con "as number" ya que en accidentHistory pueden existir nulls
                   dataPoint[province] =
                     (accidentHistory[province]?.[i] ?? 0) as number;
                 });
