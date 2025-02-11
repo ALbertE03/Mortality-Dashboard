@@ -13,9 +13,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { GeoJsonObject, Feature, GeoJsonProperties } from "geojson";
-import type { Layer } from "leaflet";
+import type { Layer, PathOptions } from "leaflet";
 
-// Define la interfaz para las propiedades del feature
+// Define la interfaz para las propiedades del feature (usada para nuestros datos)
 interface ProvinceProperties {
   province: string;
 }
@@ -156,9 +156,15 @@ export default function CubaChart() {
           <GeoJSON
             data={geoData}
             style={(
-              feature?: Feature<ProvinceProperties, GeoJsonProperties>
-            ) => {
-              if (!feature) return {};
+              feature?: Feature<any, GeoJsonProperties>
+            ): PathOptions => {
+              if (
+                !feature ||
+                !feature.properties ||
+                typeof feature.properties.province !== "string"
+              ) {
+                return {};
+              }
               const province = feature.properties.province
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "");
@@ -171,9 +177,14 @@ export default function CubaChart() {
               };
             }}
             onEachFeature={(
-              feature: Feature<ProvinceProperties, GeoJsonProperties>,
+              feature: Feature<any, GeoJsonProperties>,
               layer: Layer
             ) => {
+              if (
+                !feature.properties ||
+                typeof feature.properties.province !== "string"
+              )
+                return;
               const province = feature.properties.province
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "");
