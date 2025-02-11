@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import type { GeoJsonObject, Feature } from "geojson";
+import type { GeoJsonObject, Feature, GeoJsonProperties } from "geojson";
 import type { Layer } from "leaflet";
 
 // Define la interfaz para las propiedades del feature
@@ -155,7 +155,10 @@ export default function CubaChart() {
         >
           <GeoJSON
             data={geoData}
-            style={(feature: Feature<ProvinceProperties>) => {
+            style={(
+              feature?: Feature<ProvinceProperties, GeoJsonProperties>
+            ) => {
+              if (!feature) return {};
               const province = feature.properties.province
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "");
@@ -168,7 +171,7 @@ export default function CubaChart() {
               };
             }}
             onEachFeature={(
-              feature: Feature<ProvinceProperties>,
+              feature: Feature<ProvinceProperties, GeoJsonProperties>,
               layer: Layer
             ) => {
               const province = feature.properties.province
