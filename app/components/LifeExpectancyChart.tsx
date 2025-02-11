@@ -51,13 +51,15 @@ export default function LifeExpectancyChart() {
             complete: (result) => {
               const rawData = result.data as Record<string, string>[];
 
-              let structuredData: Record<string, Record<string, number>> = {};
+              // Se usa const porque no se reasigna la variable
+              const structuredData: Record<string, Record<string, number>> = {};
 
               rawData.forEach((row) => {
                 const country = row["Country Name"];
                 if (!country) return;
 
-                let countryData: Record<string, number> = {};
+                // Se usa const ya que no se reasigna, solo se agregan propiedades
+                const countryData: Record<string, number> = {};
                 let nullCount = 0;
 
                 Object.keys(row).forEach((year) => {
@@ -96,20 +98,28 @@ export default function LifeExpectancyChart() {
 
   function toggleCountry(country: string) {
     setSelectedCountries((prev) =>
-      prev.includes(country) ? prev.filter((c) => c !== country) : [...prev, country]
+      prev.includes(country)
+        ? prev.filter((c) => c !== country)
+        : [...prev, country]
     );
   }
 
-  if (loading) return <p className="text-center text-gray-500">Cargando datos...</p>;
-  if (!csvData || !csvData["Cuba"]) return <p className="text-center text-red-500">No se encontraron datos.</p>;
+  if (loading)
+    return <p className="text-center text-gray-500">Cargando datos...</p>;
+  if (!csvData || !csvData["Cuba"])
+    return <p className="text-center text-red-500">No se encontraron datos.</p>;
 
   const years = Object.keys(csvData["Cuba"]).sort();
 
-  const generateChartData = (dataset: Record<string, Record<string, number>> | null) => ({
+  const generateChartData = (
+    dataset: Record<string, Record<string, number>> | null
+  ) => ({
     labels: years,
     datasets: selectedCountries.map((country, index) => ({
       label: country,
-      data: dataset?.[country] ? years.map((year) => dataset[country][year] ?? null) : [],
+      data: dataset?.[country]
+        ? years.map((year) => dataset[country][year] ?? null)
+        : [],
       borderColor: `hsl(${index * 100}, 70%, 50%)`,
       borderWidth: 2,
       fill: false,
@@ -123,13 +133,18 @@ export default function LifeExpectancyChart() {
       dataset = survivalMenData;
     } else if (selectedSurvivalType === "Mujeres" && survivalWomenData) {
       dataset = survivalWomenData;
-    } else if (selectedSurvivalType === "Total" && survivalMenData && survivalWomenData) {
+    } else if (
+      selectedSurvivalType === "Total" &&
+      survivalMenData &&
+      survivalWomenData
+    ) {
       for (const country of selectedCountries) {
         dataset[country] = {};
         for (const year of years) {
           const men = survivalMenData[country]?.[year] ?? NaN;
           const women = survivalWomenData[country]?.[year] ?? NaN;
-          dataset[country][year] = isNaN(men) || isNaN(women) ? NaN : (men + women) / 2;
+          dataset[country][year] =
+            isNaN(men) || isNaN(women) ? NaN : (men + women) / 2;
         }
       }
     }
@@ -141,11 +156,11 @@ export default function LifeExpectancyChart() {
     maintainAspectRatio: false,
     scales: {
       x: {
-        title: { 
-          display: true, 
-          text: "Años", 
-          font: { size: 14, weight: "bold" }, 
-          color: darkMode ? "#FFFFFF" : "#000000" 
+        title: {
+          display: true,
+          text: "Años",
+          font: { size: 14, weight: "bold" },
+          color: darkMode ? "#FFFFFF" : "#000000",
         },
         ticks: {
           color: darkMode ? "#FFFFFF" : "#000000",
@@ -156,14 +171,17 @@ export default function LifeExpectancyChart() {
         grid: { display: false },
       },
       y: {
-        title: { 
-          display: true, 
-          text: title, 
-          font: { size: 14, weight: "bold" }, 
-          color: darkMode ? "#FFFFFF" : "#000000"
+        title: {
+          display: true,
+          text: title,
+          font: { size: 14, weight: "bold" },
+          color: darkMode ? "#FFFFFF" : "#000000",
         },
         beginAtZero: false,
-        grid: { display: true, color: darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)" },
+        grid: {
+          display: true,
+          color: darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)",
+        },
         ticks: { color: darkMode ? "#FFFFFF" : "#000000" },
       },
     },
@@ -174,23 +192,53 @@ export default function LifeExpectancyChart() {
         text: title,
         font: { size: 16, weight: "bold" },
         align: "center",
-        color: darkMode ? "#FFFFFF" : "#000000", 
+        color: darkMode ? "#FFFFFF" : "#000000",
       },
     },
   });
 
   return (
     <div className="w-full max-w-6xl mx-auto mt-10 flex flex-row gap-6">
-      {/* Contenedor de gráficos */}
+      {/* Contenedor de gráficos y controles */}
       <div className="flex-1 flex flex-col gap-8">
+        {/* Selector para el tipo de Supervivencia */}
+        <div className="mb-4">
+          <label className="mr-2 font-bold">Tipo de Supervivencia:</label>
+          <select
+            value={selectedSurvivalType}
+            onChange={(e) =>
+              setSelectedSurvivalType(
+                e.target.value as "Total" | "Hombres" | "Mujeres"
+              )
+            }
+            className="p-1 border rounded"
+          >
+            <option value="Total">Total</option>
+            <option value="Hombres">Hombres</option>
+            <option value="Mujeres">Mujeres</option>
+          </select>
+        </div>
+
         {/* Gráfico de Esperanza de Vida */}
-        <div className="p-4 relative border rounded-lg shadow-lg" style={{ height: "400px" }}>
-          <Line data={generateChartData(csvData)} options={chartOptions("Esperanza de Vida al Nacer")} />
+        <div
+          className="p-4 relative border rounded-lg shadow-lg"
+          style={{ height: "400px" }}
+        >
+          <Line
+            data={generateChartData(csvData)}
+            options={chartOptions("Esperanza de Vida al Nacer")}
+          />
         </div>
 
         {/* Gráfico de Supervivencia */}
-        <div className="p-4 relative border rounded-lg shadow-lg" style={{ height: "400px" }}>
-          <Line data={generateSurvivalData()} options={chartOptions("Supervivencia hasta los 65 años (%)")} />
+        <div
+          className="p-4 relative border rounded-lg shadow-lg"
+          style={{ height: "400px" }}
+        >
+          <Line
+            data={generateSurvivalData()}
+            options={chartOptions("Supervivencia hasta los 65 años (%)")}
+          />
         </div>
       </div>
 

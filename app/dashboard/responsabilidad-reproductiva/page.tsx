@@ -6,14 +6,10 @@ import dynamic from "next/dynamic";
 import MiniMenu from "../../components/Menu";
 import { useDarkMode } from "../../components/DarkModeProvider";
 import MortalidadMaterna1 from "../../components/MortalidadMaterna1";
-import MortalidadMaterna2 from "../../components/MortalidadMaterna2";
 import MortalidadMaterna3 from "../../components/MortalidadMaterna3";
 import MortalidadMaterna4 from "../../components/MortalidadMaterna4";
 
-
 const ETSChart = dynamic(() => import("../../components/ETSChart"), { ssr: false });
-
-
 const Infant = dynamic(() => import("../../components/Infant"), { ssr: false });
 
 export default function MortalidadReproductiva() {
@@ -21,12 +17,11 @@ export default function MortalidadReproductiva() {
   const [selectedCategory, setSelectedCategory] = useState<"maternidad" | "ets" | "mortalidad-infantil">("maternidad");
   const [isClient, setIsClient] = useState(false);
 
-
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null; 
+  if (!isClient) return null;
 
   return (
     <motion.div 
@@ -36,7 +31,6 @@ export default function MortalidadReproductiva() {
       transition={{ duration: 0.5 }} 
       className={`w-full max-w-6xl mx-auto p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
     >
-      {}
       <h1 className="text-4xl font-bold text-center mb-6">Mortalidad y Sexualidad</h1>
 
       {/* Subrayado tipo electrocardiograma */}
@@ -51,7 +45,6 @@ export default function MortalidadReproductiva() {
         </svg>
       </div>
 
-      {}
       <p className="text-lg text-center mb-8 max-w-3xl mx-auto">
         La <strong>mortalidad reproductiva</strong> abarca todas las causas de muerte asociadas al proceso de reproducción humana,  
         desde la gestación hasta los primeros años de vida del bebé. Estas muertes pueden prevenirse con acceso a   
@@ -64,7 +57,6 @@ export default function MortalidadReproductiva() {
         - <strong>Mortalidad Infantil</strong>: principales causas de fallecimiento en los primeros años de vida.  
       </p>
 
-      {}
       <div className="flex justify-center mb-6 space-x-4">
         {["maternidad", "ets", "mortalidad-infantil"].map((category) => (
           <button
@@ -85,12 +77,8 @@ export default function MortalidadReproductiva() {
         ))}
       </div>
 
-      {}
       <div className={`p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg shadow-lg ${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"}`}>
-        
-        {/* ──────────────────────────────────────────────────────
-            SECCIÓN: MORTALIDAD MATERNA
-        ────────────────────────────────────────────────────── */}
+        {/* SECCIÓN: MORTALIDAD MATERNA */}
         {selectedCategory === "maternidad" && (
           <>
             <h2 className="text-2xl font-semibold text-center mb-4">Mortalidad Materna</h2>
@@ -101,21 +89,19 @@ export default function MortalidadReproductiva() {
               La atención prenatal, el acceso a servicios de emergencia obstétrica y la educación materna  
               son clave para reducir estos índices.  
             </p>
-
-            {/* Gráfico de Mortalidad Materna desde 1987 */}
             <MortalidadMaterna1 />
-
-            {/* Explicación adicional de las causas directas e indirectas */}
             <div className="mt-10 text-lg text-center max-w-4xl mx-auto">
               <h2 className="text-2xl font-semibold mb-4">Causas de Mortalidad Materna</h2>
               <p className="mb-4">
                 La <strong>mortalidad materna</strong> puede clasificarse en <strong>causas directas</strong> e <strong>indirectas</strong>:
               </p>
-              <p className="mb-2"><strong>Causas Directas:</strong> Son aquellas relacionadas directamente con complicaciones del embarazo, parto y postparto, como hemorragias, infecciones o hipertensión.</p>
-              <p><strong>Causas Indirectas:</strong> Son aquellas que no están directamente causadas por el embarazo, pero se ven agravadas por él, como enfermedades cardiovasculares, infecciones o anemia.</p>
+              <p className="mb-2">
+                <strong>Causas Directas:</strong> Son aquellas relacionadas directamente con complicaciones del embarazo, parto y postparto, como hemorragias, infecciones o hipertensión.
+              </p>
+              <p>
+                <strong>Causas Indirectas:</strong> Son aquellas que no están directamente causadas por el embarazo, pero se ven agravadas por él, como enfermedades cardiovasculares, infecciones o anemia.
+              </p>
             </div>
-
-            {/* Gráficos de Causas Directas e Indirectas */}
             <div className="mt-10 flex flex-col md:flex-row justify-center gap-8">
               <div className="w-full md:w-1/2">
                 <MortalidadMaterna3 />
@@ -124,8 +110,6 @@ export default function MortalidadReproductiva() {
                 <MortalidadMaterna4 />
               </div>
             </div>
-
-            {/* */}
             <div className="mt-10 p-6 border-4 border-red-600 bg-red-100 dark:bg-red-800 dark:border-red-400 text-red-900 dark:text-red-100 rounded-lg shadow-lg max-w-3xl mx-auto">
               <h3 className="text-xl font-semibold text-center mb-3">⚠ Peligros de la Maternidad Temprana según la OMS</h3>
               <p>
@@ -141,9 +125,7 @@ export default function MortalidadReproductiva() {
           </>
         )}
 
-        {/* ──────────────────────────────────────────────────────
-            SECCIÓN: ENFERMEDADES DE TRANSMISIÓN SEXUAL (ETS)
-        ────────────────────────────────────────────────────── */}
+        {/* SECCIÓN: ETS */}
         {selectedCategory === "ets" && (
           <>
             <h2 className="text-2xl font-semibold text-center mb-4">Enfermedades de Transmisión Sexual (ETS)</h2>
@@ -157,13 +139,9 @@ export default function MortalidadReproductiva() {
               de métodos de prevención como el <strong>preservativo</strong> y la <strong>vacunación</strong>  
               contra el VPH y la hepatitis B son fundamentales para reducir su impacto en la salud pública.  
             </p>
-
-            {/* 📊 Gráfico de ETS */}
             <div className="w-full">
               <ETSChart />
             </div>
-
-            {/* ⚠ Recuadro con Recomendaciones de la OMS */}
             <div className="mt-10 p-6 border-4 border-blue-600 bg-blue-100 dark:bg-blue-300 dark:border-blue-400 text-black dark:text-black rounded-lg shadow-lg max-w-3xl mx-auto">
               <h3 className="text-xl font-semibold text-center mb-3">🔹 Recomendaciones de la OMS sobre Salud Sexual</h3>
               <p>
@@ -181,9 +159,7 @@ export default function MortalidadReproductiva() {
           </>
         )}
 
-        {/* ──────────────────────────────────────────────────────
-            SECCIÓN: MORTALIDAD INFANTIL
-        ────────────────────────────────────────────────────── */}
+        {/* SECCIÓN: MORTALIDAD INFANTIL */}
         {selectedCategory === "mortalidad-infantil" && (
           <>
             <h2 className="text-2xl font-semibold text-center mb-4">Mortalidad Infantil</h2>
@@ -196,13 +172,9 @@ export default function MortalidadReproductiva() {
               <br /><br />
               A pesar de los avances en medicina y salud pública, continúa siendo un problema en múltiples regiones del mundo. Mejorar la atención especializada, promover la lactancia materna y garantizar el acceso a vacunas son acciones clave para reducir estos índices.
             </p>
-
-            {/* 📊 Gráfico de Mortalidad Infantil (Barras apiladas) */}
             <div className="w-full">
               <Infant />
             </div>
-
-            {/* ⚠ Recuadro de alerta sobre accidentes y salud mental */}
             <div className="mt-10 p-6 border-4 border-green-600 bg-green-100 dark:bg-green-800 dark:border-green-400 text-green-900 dark:text-green-100 rounded-lg shadow-lg max-w-3xl mx-auto">
               <h3 className="text-xl font-semibold text-center mb-3">⚠ Importancia de la Prevención y la Madurez según la OMS</h3>
               <p>
@@ -218,7 +190,6 @@ export default function MortalidadReproductiva() {
         )}
       </div>
 
-      {/* Menú flotante siempre visible */}
       <MiniMenu />
     </motion.div>
   );

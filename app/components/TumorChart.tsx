@@ -10,7 +10,8 @@ import {
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TooltipItem,
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
@@ -34,7 +35,7 @@ const maleData: Record<string, number[]> = {
   "Recto y ano": [0, 0, 10, 34, 110, 40],
   "Huesos y cartílagos": [2, 4, 11, 31, 78, 29],
   "Mama": [0, 0, 0, 4, 9, 4],
-  "Otras localizaciones": [3, 5, 24, 173, 436, 172]
+  "Otras localizaciones": [3, 5, 24, 173, 436, 172],
 };
 
 const femaleData: Record<string, number[]> = {
@@ -57,7 +58,7 @@ const femaleData: Record<string, number[]> = {
   "Esófago": [0, 0, 0, 25, 84, 42],
   "Laringe": [0, 0, 0, 15, 55, 28],
   "Huesos y cartílagos": [1, 5, 5, 18, 37, 22],
-  "Otras localizaciones": [6, 3, 23, 147, 413, 188]
+  "Otras localizaciones": [6, 3, 23, 147, 413, 188],
 };
 
 const allCancerKeys = Array.from(
@@ -77,23 +78,39 @@ const cancerTypes = allCancerKeys;
 
 export default function TumorChart() {
   const { darkMode } = useDarkMode();
-  // 1) El sexo seleccionado por defecto permanece igual
+
+  // El sexo seleccionado: "total", "male" o "female"
   const [selectedSex, setSelectedSex] = useState<"total" | "male" | "female">("total");
-  // 2) Se inicializa con una opción seleccionada por defecto
+  // Se inicializa con un cáncer seleccionado por defecto
   const [selectedCancers, setSelectedCancers] = useState<string[]>([
-    "Tráquea, bronquios y pulmón" // ← Cáncer por defecto seleccionado
+    "Tráquea, bronquios y pulmón",
   ]);
 
   const ageGroups = ["20-39", "40-59", "60-79", "80+"];
-
   const colors = [
-    "#4A90E2", "#E94E77", "#50E3C2", "#F5A623", "#B8E986",
-    "#D0021B", "#8B572A", "#BD10E0", "#417505", "#F8E71C",
-    "#7ED321", "#B3B3B3", "#4A4A4A", "#D0011B", "#9B9B9B",
-    "#F5A623", "#5A0ED2", "#E93E24", "#FF8800", "#00CC33"
+    "#4A90E2",
+    "#E94E77",
+    "#50E3C2",
+    "#F5A623",
+    "#B8E986",
+    "#D0021B",
+    "#8B572A",
+    "#BD10E0",
+    "#417505",
+    "#F8E71C",
+    "#7ED321",
+    "#B3B3B3",
+    "#4A4A4A",
+    "#D0011B",
+    "#9B9B9B",
+    "#F5A623",
+    "#5A0ED2",
+    "#E93E24",
+    "#FF8800",
+    "#00CC33",
   ];
 
-  // Fusionar datos hombre + mujer si selectedSex === "total"
+  // Filtrar o combinar datos según el sexo seleccionado
   const filteredData = useMemo(() => {
     if (selectedSex === "male") return maleData;
     if (selectedSex === "female") return femaleData;
@@ -103,22 +120,18 @@ export default function TumorChart() {
       totalData[key] = maleData[key].map((val, i) => val + femaleData[key][i]);
     });
     return totalData;
-  }, [selectedSex]);
+  }, [selectedSex, allCancerKeys]);
 
   // Alternar selección de cáncer
   const toggleCancerSelection = (cancer: string) => {
     setSelectedCancers((prev) =>
-      prev.includes(cancer)
-        ? prev.filter((c) => c !== cancer)
-        : [...prev, cancer]
+      prev.includes(cancer) ? prev.filter((c) => c !== cancer) : [...prev, cancer]
     );
   };
 
-  // Calcular el máximo del eje Y
+  // Calcular el máximo del eje Y para el gráfico de barras
   const yAxisMax = useMemo(() => {
-    if (selectedCancers.length === 0) {
-      return 30;
-    }
+    if (selectedCancers.length === 0) return 30;
     const allValues = selectedCancers.flatMap((cancer) => {
       const dataPoints = filteredData[cancer]?.slice(2) ?? [];
       return dataPoints;
@@ -127,36 +140,57 @@ export default function TumorChart() {
     return maxVal + 30;
   }, [selectedCancers, filteredData]);
 
-  // Datos para el BarChart
+  // Datos para el gráfico de barras
   const barData = useMemo(() => {
     return {
       labels: ageGroups,
       datasets: selectedCancers.map((cancer, index) => ({
         label: cancer,
         data: (filteredData[cancer] || []).slice(2),
-        backgroundColor: colors[index % colors.length]
-      }))
+        backgroundColor: colors[index % colors.length],
+      })),
     };
-  }, [selectedCancers, filteredData]);
+  }, [selectedCancers, filteredData, ageGroups, colors]);
 
-  // Opciones para el BarChart
+  // Opciones para el gráfico de barras (incluyendo estilo para modo oscuro)
   const barOptions = useMemo(() => {
     return {
       scales: {
         y: {
           beginAtZero: true,
-          max: yAxisMax
-        }
+          max: yAxisMax,
+          ticks: {
+            color: darkMode ? "#FFFFFF" : "#000000",
+          },
+          grid: {
+            color: darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)",
+          },
+        },
+        x: {
+          ticks: {
+            color: darkMode ? "#FFFFFF" : "#000000",
+          },
+          grid: {
+            color: darkMode ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)",
+          },
+        },
       },
       plugins: {
         legend: {
-          display: false
-        }
-      }
+          labels: {
+            color: darkMode ? "#FFFFFF" : "#000000",
+          },
+        },
+        tooltip: {
+          titleColor: darkMode ? "#FFFFFF" : "#000000",
+          bodyColor: darkMode ? "#FFFFFF" : "#000000",
+          footerColor: darkMode ? "#FFFFFF" : "#000000",
+        },
+      },
     };
-  }, [yAxisMax]);
+  }, [yAxisMax, darkMode]);
 
-  // Datos para el PieChart
+  // Datos para el gráfico de pastel
   const pieData = useMemo(() => {
     return {
       labels: selectedCancers,
@@ -168,38 +202,40 @@ export default function TumorChart() {
           }),
           backgroundColor: selectedCancers.map(
             (_, index) => colors[index % colors.length]
-          )
-        }
-      ]
+          ),
+        },
+      ],
     };
-  }, [selectedCancers, filteredData]);
+  }, [selectedCancers, filteredData, colors]);
 
-  // Opciones para el PieChart (tooltip en porcentaje)
+  // Opciones para el gráfico de pastel: en modo claro y oscuro, el tooltip tendrá letras blancas
   const pieOptions = useMemo(() => {
     return {
       plugins: {
         legend: {
-          display: false
+          display: false,
         },
         tooltip: {
           callbacks: {
-            label: function (context: any) {
+            label: function (context: TooltipItem<"pie">) {
               const dataset = context.dataset;
               const dataIndex = context.dataIndex;
               const dataArr = dataset.data as number[];
-
               const total = dataArr.reduce((a, b) => a + b, 0);
               const currentValue = dataArr[dataIndex];
               const percentage = ((currentValue / total) * 100).toFixed(2) + "%";
-
               const labelName = context.label || "";
               return labelName + ": " + percentage;
-            }
-          }
-        }
-      }
+            },
+          },
+          // En ambos modos, el tooltip mostrará el texto en blanco
+          titleColor: "#FFFFFF",
+          bodyColor: "#FFFFFF",
+          footerColor: "#FFFFFF",
+        },
+      },
     };
-  }, []);
+  }, [darkMode, colors]);
 
   return (
     <div className="p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg">
@@ -233,12 +269,11 @@ export default function TumorChart() {
 
         {/* Selector de Cánceres */}
         <div
-          className={`w-56 ml-8 border-2 rounded-lg p-2 overflow-y-scroll max-h-[400px] 
-            ${
-              darkMode
-                ? "dark:border-gray-400 dark:bg-gray-800 dark:text-white"
-                : "bg-white border-gray-400 text-gray-900"
-            }`}
+          className={`w-56 ml-8 border-2 rounded-lg p-2 overflow-y-scroll max-h-[400px] ${
+            darkMode
+              ? "dark:border-gray-400 dark:bg-gray-800 dark:text-white"
+              : "bg-white border-gray-400 text-gray-900"
+          }`}
         >
           <h3 className="text-md font-semibold text-center mb-2">Tipos de Cáncer</h3>
           <ul className="space-y-1">
@@ -269,7 +304,6 @@ export default function TumorChart() {
           <div style={{ width: "400px", height: "400px" }}>
             <Pie data={pieData} options={pieOptions} />
           </div>
-
           {/* Leyenda manual */}
           <div className="ml-8">
             {selectedCancers.map((cancer, index) => (

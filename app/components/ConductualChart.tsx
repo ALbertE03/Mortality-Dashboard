@@ -12,41 +12,75 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartData
+  ChartData,
+  TooltipItem,
 } from "chart.js";
-import { useDarkMode } from "../components/DarkModeProvider";
+// Se eliminó la importación de useDarkMode ya que no se utiliza
+// import { useDarkMode } from "../components/DarkModeProvider";
 
 // Registrar Chart.js
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function ConductualChart() {
-  const { darkMode } = useDarkMode();
+  // Se eliminó el uso de darkMode, pues no se utiliza en este componente
+  // const { darkMode } = useDarkMode();
 
-  // 🔹Seleccionar al menos una categoría por defecto
+  // Seleccionar al menos una categoría por defecto
   const [selectedBehaviors, setSelectedBehaviors] = useState<string[]>([
-    "No respetar el derecho de vía" // <-- Comportamiento inicial seleccionado
+    "No respetar el derecho de vía" // Comportamiento inicial seleccionado
   ]);
 
-  // 🔹 Años en el eje X
+  // Años en el eje X
   const years = Array.from({ length: 14 }, (_, i) => 2009 + i);
 
-  // 🔹 Categorías de comportamiento
+  // Categorías de comportamiento
   const behaviorCategories = [
-    "No respetar el derecho de vía", "No atender el control del vehículo", "Exceso de velocidad",
-    "No obedecer las luces del semáforo", "Violaciones del peatón", "Conducir bajo la ingestión de bebidas alcohólicas",
-    "Adelantamiento indebido", "Maniobra de marcha atrás", "Estacionamiento inadecuado",
-    "Violaciones de los conductores de ciclos", "Animales sueltos", "Desperfectos técnicos",
-    "Conductores que violan derecho del peatón", "Transportación masiva", "Otros"
+    "No respetar el derecho de vía",
+    "No atender el control del vehículo",
+    "Exceso de velocidad",
+    "No obedecer las luces del semáforo",
+    "Violaciones del peatón",
+    "Conducir bajo la ingestión de bebidas alcohólicas",
+    "Adelantamiento indebido",
+    "Maniobra de marcha atrás",
+    "Estacionamiento inadecuado",
+    "Violaciones de los conductores de ciclos",
+    "Animales sueltos",
+    "Desperfectos técnicos",
+    "Conductores que violan derecho del peatón",
+    "Transportación masiva",
+    "Otros"
   ];
 
-  // 🔹 Colores para cada categoría
+  // Colores para cada categoría
   const colors = [
-    "#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#FFC300", "#900C3F",
-    "#DAF7A6", "#581845", "#28B463", "#1F618D", "#6C3483", "#D68910",
-    "#17A589", "#A93226", "#2E4053"
+    "#FF5733",
+    "#33FF57",
+    "#3357FF",
+    "#FF33A1",
+    "#FFC300",
+    "#900C3F",
+    "#DAF7A6",
+    "#581845",
+    "#28B463",
+    "#1F618D",
+    "#6C3483",
+    "#D68910",
+    "#17A589",
+    "#A93226",
+    "#2E4053"
   ];
 
-  // 🔹 Datos de comportamiento por año (porcentaje)
+  // Datos de comportamiento por año (porcentaje)
   const behaviorData: Record<string, number[]> = {
     "No respetar el derecho de vía": [25.3, 25.4, 25.0, 25.1, 25.4, 25.2, 26.0, 21.6, 16.7, 16.7, 16.7, 15.9, 26.5, 29.4],
     "No atender el control del vehículo": [29.4, 28.4, 29.5, 29.5, 29.7, 31.6, 30.2, 33.2, 34.3, 33.2, 34.1, 34.1, 36.4, 30.1],
@@ -65,7 +99,7 @@ export default function ConductualChart() {
     "Otros": [8.6, 8.4, 11.6, 13.7, 14.9, 14.2, 14.3, 17.0, 21.5, 22.8, 21.8, 21.8, 4.6, 5.3]
   };
 
-  // 🔹 Alternar selección de comportamiento
+  // Alternar selección de comportamiento
   const toggleBehaviorSelection = (behavior: string) => {
     setSelectedBehaviors((prevSelected) =>
       prevSelected.includes(behavior)
@@ -74,9 +108,10 @@ export default function ConductualChart() {
     );
   };
 
-  // 🔹 Obtener datos del gráfico de pastel con porcentajes
+  // Obtener datos del gráfico de pastel con porcentajes
   const pieDataValues = selectedBehaviors.map(
-    behavior => behaviorData[behavior]?.reduce((acc, val) => acc + val, 0) || 0
+    (behavior) =>
+      behaviorData[behavior]?.reduce((acc, val) => acc + val, 0) || 0
   );
 
   const total = pieDataValues.reduce((acc, val) => acc + val, 0);
@@ -93,15 +128,16 @@ export default function ConductualChart() {
     ],
   };
 
-  // 🔹 Configuración del tooltip para mostrar el porcentaje
+  // Configuración del tooltip para mostrar el porcentaje
   const pieOptions = {
     plugins: {
       tooltip: {
         callbacks: {
-          label: (tooltipItem: any) => {
-            const value = tooltipItem.raw;
+          label: (tooltipItem: TooltipItem<"pie">) => {
+            // Se asegura que tooltipItem.raw sea un número
+            const value = tooltipItem.raw as number;
             const percentage = ((value / total) * 100).toFixed(2) + "%";
-            return `${percentage}`;
+            return percentage;
           },
         },
       },
@@ -113,11 +149,9 @@ export default function ConductualChart() {
 
   return (
     <div className="w-full flex flex-col items-center">
-      
-      {/* 📌 Gráfico de líneas y selector de categorías */}
+      {/* Gráfico de líneas y selector de categorías */}
       <div className="w-full flex flex-row justify-between items-start">
-        
-        {/* 📊 Gráfico de Líneas */}
+        {/* Gráfico de Líneas */}
         <div className="w-3/4 p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Evolución de Causas de Accidentes
@@ -132,16 +166,18 @@ export default function ConductualChart() {
                   borderColor: colors[index % colors.length],
                   backgroundColor: colors[index % colors.length],
                   fill: false,
-                }))
+                })),
               }}
               options={{ plugins: { legend: { display: false } } }}
             />
           </div>
         </div>
 
-        {/* 📌 Selector de categorías */}
+        {/* Selector de categorías */}
         <div className="w-64 border-2 rounded-lg p-2 overflow-y-scroll max-h-[400px] ml-6">
-          <h3 className="text-md font-semibold text-center mb-2">Causas de Accidentes</h3>
+          <h3 className="text-md font-semibold text-center mb-2">
+            Causas de Accidentes
+          </h3>
           <ul className="space-y-1">
             {behaviorCategories.map((behavior) => (
               <li
@@ -160,10 +196,9 @@ export default function ConductualChart() {
         </div>
       </div>
 
-      {/* 📊 Gráfico de Pastel dentro de su propio cuadro */}
+      {/* Gráfico de Pastel dentro de su propio cuadro */}
       <div className="mt-6 w-full flex flex-row justify-center items-start">
-        
-        {/* 📊 Cuadro del Gráfico de Pastel */}
+        {/* Cuadro del Gráfico de Pastel */}
         <div className="w-1/2 p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg">
           <h2 className="text-2xl font-semibold text-center mb-4">
             Distribución de Causas Seleccionadas
@@ -171,11 +206,14 @@ export default function ConductualChart() {
           <Pie data={pieData} options={pieOptions} />
         </div>
 
-        {/* 📌 Leyenda afuera del cuadro */}
+        {/* Leyenda afuera del cuadro */}
         <div className="w-64 ml-6">
           <ul className="space-y-1">
             {selectedBehaviors.map((behavior, index) => (
-              <li key={behavior} className="text-sm flex items-center space-x-2">
+              <li
+                key={behavior}
+                className="text-sm flex items-center space-x-2"
+              >
                 <span
                   className="w-4 h-4 rounded-full"
                   style={{ backgroundColor: colors[index % colors.length] }}
