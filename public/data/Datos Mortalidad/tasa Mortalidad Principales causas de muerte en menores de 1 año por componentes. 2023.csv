@@ -1,0 +1,23 @@
+Causas,<7días,7-27días,28díasa11meses,Total
+Septicemia (A40-A41 P36),0.2,0.4,0.2,0.8
+Trastornos relacionados con la duración de la
+gestación y el crecimiento fetal (P05-P08)
+,0.4,0.4,0.1,0.8
+Malformaciones congénitas deformidades y
+anomalías cromosómicas (Q00-Q99),0.2,0.1,0.4,0.7
+Hemorragia intracraneal no traumática (P52),0.2,0.3,0.1,0.7
+Persistencia de la circulación fetal (P293),0.3,0.1,0.0,0.4
+Influenza y neumonía (J09-J18),-,0.1,0.3,0.4
+Hemorragia pulmonar (P26),0.1,0.2,0.0,0.3
+Hipoxia y asfixia del nacimiento (P20-P21),14,7,8,29
+Otras afecciones originadas en el período perinatal(Resto P00-P96)
+,0.1,0.2,0.0,0.3
+Accidentes "(V01-X59 Y85-Y86),-,-,0.2,0.2
+Enfermedades del corazón(I05-I52),-,0.0,0.2,0.2
+Meningoencefalitis  bacteriana viral y la no
+ especificada(A83-A87,",G00-G04)
+,0.0,-,0.1,0.1
+Neumonía congénita (P23),0.1,0.0,-,0.1
+Aspiración neonatal de meconio (P240),0.1,-,-,0.1
+Otras causas,0.2,0.2,1.1,1.5
+Total,2.1,2.0,2.9,7.1

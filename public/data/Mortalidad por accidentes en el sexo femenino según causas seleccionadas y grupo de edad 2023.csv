@@ -1,0 +1,13 @@
+Causa,<10 años,10-19 años,20-39 años,40-59 años,60-79 años,80 años y más,Total**
+Caídas accidentales (W00-W19),1,1,3,29,387,1038,1459
+Secuelas de accidentes (Y85-Y86),null,null,null,9,162,818,991
+Accidentes de transporte (V01-V99),2,9,44,56,40,10,162
+Vehículos de motor,2,9,41,49,37,10,149
+Otros accidentes del transporte,null,null,3,7,3,null,13
+Peatón (V01-V09),1,4,7,19,21,5,58
+Bicicleta (V10-V19),null,null,1,2,null,null,3
+Ahogamiento y sumersión accidentales (W65-W74),3,6,3,3,3,null,18
+Exposición al humo, fuego y llamas (X00-X09),null,null,1,3,4,4,12
+Envenenamiento accidental (X40-X49),1,1,2,2,5,1,12
+Exposición a la corriente eléctrica (W85-W87),2,null,4,1,1,1,9
+Otros accidentes (W20-W64, W75-W84, W88-W99, X10-X39, X50-X59),12,4,2,21,27,22,88
