@@ -9,7 +9,8 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartOptions
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
@@ -43,31 +44,48 @@ export default function CerebrovascularChart() {
     [3, 22, 332, 680]
   ];
 
-  const totalData = maleData.map((disease, index) => disease.map((value, i) => value + femaleData[index][i]));
+  const totalData = maleData.map((disease, index) =>
+    disease.map((value, i) => value + femaleData[index][i])
+  );
 
   const datasets = diseases.map((disease, index) => ({
     label: disease,
-    data: selectedDataset === "total" ? totalData[index] : selectedDataset === "male" ? maleData[index] : femaleData[index],
+    data:
+      selectedDataset === "total"
+        ? totalData[index]
+        : selectedDataset === "male"
+        ? maleData[index]
+        : femaleData[index],
     backgroundColor: colors[index]
   }));
 
   const chartData = { labels: ageGroups, datasets: datasets };
 
-  
-  const chartOptions = {
+  const chartOptions: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "bottom", labels: { color: darkMode ? "white" : "black" } }
+      legend: {
+        position: "bottom",
+        labels: { color: darkMode ? "white" : "black" }
+      }
     },
     scales: {
-      x: { 
-        title: { display: true, text: "Grupos de Edad", color: darkMode ? "white" : "black" },
+      x: {
+        title: {
+          display: true,
+          text: "Grupos de Edad",
+          color: darkMode ? "white" : "black"
+        },
         ticks: { color: darkMode ? "white" : "black" }
       },
-      y: { 
-        title: { display: true, text: "Defunciones", color: darkMode ? "white" : "black" }, 
-        beginAtZero: true, 
+      y: {
+        title: {
+          display: true,
+          text: "Defunciones",
+          color: darkMode ? "white" : "black"
+        },
+        beginAtZero: true,
         ticks: { color: darkMode ? "white" : "black" }
       }
     }
@@ -75,7 +93,9 @@ export default function CerebrovascularChart() {
 
   return (
     <div className="p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg">
-      <h2 className="text-2xl font-semibold text-center mb-4">Mortalidad por Enfermedades Cerebrovasculares</h2>
+      <h2 className="text-2xl font-semibold text-center mb-4">
+        Mortalidad por Enfermedades Cerebrovasculares
+      </h2>
 
       {/* Selector de género */}
       <div className="flex justify-center space-x-4 mb-4">
@@ -85,12 +105,14 @@ export default function CerebrovascularChart() {
             onClick={() => setSelectedDataset(dataset as "total" | "male" | "female")}
             className={`
               px-4 py-2 rounded-lg transition 
-              ${selectedDataset === dataset 
-                ? dataset === "total" 
-                  ? "bg-green-600 text-white"  
-                  : "bg-blue-600 text-white"   
-                : "bg-gray-300 text-gray-900 hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-300 hover:dark:bg-gray-600"
-              }`}
+              ${
+                selectedDataset === dataset
+                  ? dataset === "total"
+                    ? "bg-green-600 text-white"
+                    : "bg-blue-600 text-white"
+                  : "bg-gray-300 text-gray-900 hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-300 hover:dark:bg-gray-600"
+              }
+            `}
           >
             {dataset === "total" ? "Total" : dataset === "male" ? "Hombres" : "Mujeres"}
           </button>
