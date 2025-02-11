@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import type { GeoJsonObject, Feature, GeoJsonProperties, Geometry } from "geojson";
+import type { GeoJsonObject, Feature, Geometry } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 
 // Define la interfaz para las propiedades del feature
