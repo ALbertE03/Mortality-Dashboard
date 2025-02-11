@@ -16,9 +16,10 @@ export default function Dashboard() {
       transition={{ duration: 0.5 }}
       className="relative min-h-screen flex flex-col items-center pb-12"
     >
-      {}
+      
       <h1 className="text-4xl font-bold mt-6 md:mt-12 mb-8 text-center">
-        "SALUD EN CUBA, PARA ADOLESCENTES"
+      {"\"SALUD EN CUBA, PARA ADOLESCENTES\""}
+
       </h1>
       
       
