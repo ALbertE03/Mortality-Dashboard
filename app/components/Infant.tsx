@@ -9,7 +9,8 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartOptions
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
@@ -95,7 +96,7 @@ export default function Infant() {
     ]
   };
 
-  const options = {
+  const options: ChartOptions<"bar"> = {
     responsive: true,
     plugins: {
       legend: {

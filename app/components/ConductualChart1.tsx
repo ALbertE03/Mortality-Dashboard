@@ -9,7 +9,8 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartOptions
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
@@ -79,9 +80,11 @@ export default function ConductualChart1() {
   ];
 
   // Calcular total sumando ambos conjuntos de datos
-  const totalData = maleData.map((row, index) => row.map((value, i) => value + femaleData[index][i]));
+  const totalData = maleData.map((row, index) =>
+    row.map((value, i) => value + femaleData[index][i])
+  );
 
-  // 📌 Selector de datos con diferentes colores
+  // 📌 Configuración de los datasets con diferentes colores
   const datasets = causes.map((cause, index) => ({
     label: cause,
     data:
@@ -90,7 +93,7 @@ export default function ConductualChart1() {
         : selectedDataset === "male"
         ? maleData[index]
         : femaleData[index],
-    backgroundColor: colors[index] // 🔥 Color diferente para cada causa
+    backgroundColor: colors[index]
   }));
 
   // 📊 Configuración del gráfico
@@ -99,19 +102,30 @@ export default function ConductualChart1() {
     datasets: datasets
   };
 
-  const chartOptions = {
+  const chartOptions: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "bottom", labels: { color: darkMode ? "white" : "black" } }
+      legend: { 
+        position: "bottom", 
+        labels: { color: darkMode ? "white" : "black" } 
+      }
     },
     scales: {
       x: {
-        title: { display: true, text: "Grupos de Edad", color: darkMode ? "white" : "black" },
+        title: { 
+          display: true, 
+          text: "Grupos de Edad", 
+          color: darkMode ? "white" : "black" 
+        },
         ticks: { color: darkMode ? "white" : "black" }
       },
       y: {
-        title: { display: true, text: "Defunciones", color: darkMode ? "white" : "black" },
+        title: { 
+          display: true, 
+          text: "Defunciones", 
+          color: darkMode ? "white" : "black" 
+        },
         beginAtZero: true,
         ticks: { color: darkMode ? "white" : "black" }
       }
@@ -120,8 +134,6 @@ export default function ConductualChart1() {
 
   return (
     <div className="p-6">
-
-
       {/* Selector de género */}
       <div className="flex justify-center space-x-4 mb-4">
         {["total", "male", "female"].map((dataset) => (
@@ -131,8 +143,8 @@ export default function ConductualChart1() {
             className={`px-4 py-2 rounded-lg transition ${
               selectedDataset === dataset
                 ? dataset === "total"
-                  ? "bg-green-600 text-white" // ✅ Botón "Total" en verde cuando está activo
-                  : "bg-blue-600 text-white" // ✅ Botón "Hombres" y "Mujeres" en azul cuando está activo
+                  ? "bg-green-600 text-white" // Botón "Total" en verde cuando está activo
+                  : "bg-blue-600 text-white"  // Botón "Masculino" y "Femenino" en azul cuando está activo
                 : "bg-gray-300 text-gray-900 hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-300 hover:dark:bg-gray-600"
             }`}
           >
