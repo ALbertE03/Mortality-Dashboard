@@ -13,31 +13,32 @@ export default function MiniMenu() {
 
   const { darkMode, toggleDarkMode } = useDarkMode();
   const router = useRouter();
-  const pathname = usePathname(); // Get current route
+  const pathname = usePathname(); // Obtener la ruta actual
 
-  // 🔹 Store menu state across navigation
+  // Almacenar el estado del menú a través de la navegación
   useEffect(() => {
     localStorage.setItem("menuOpen", String(menuOpen));
   }, [menuOpen]);
 
-  // 🔹 Handle smooth navigation (no reloads)
+  // Manejar navegación sin recargar la página
   const handleNavigation = (route: string) => {
     if (pathname !== route) {
-      router.push(route); // Navigate without reloading
+      router.push(route);
     }
   };
 
   return (
     <div className="fixed bottom-6 left-6 z-50">
-      {/* Floating Button to Toggle Menu */}
+      {/* Botón flotante para mostrar/ocultar el menú con aria-label para accesibilidad */}
       <button 
+        aria-label="Toggle menu"
         className="bg-blue-600 text-white p-4 rounded-full shadow-lg transition-all"
         onClick={() => setMenuOpen((prev) => !prev)}
       >
         <Menu size={28} />
       </button>
 
-      {/* Persistently Visible Menu with Smooth Animations */}
+      {/* Menú visible con animaciones */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div 
@@ -48,7 +49,7 @@ export default function MiniMenu() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
           >
-            {/* Menu Options with Active Highlight */}
+            {/* Opciones del menú */}
             {[
               { name: "Inicio", route: "/dashboard" },
               { name: "Enfermedades No Transmisibles", route: "/dashboard/enfermedades-no-transmisibles" },
@@ -68,7 +69,7 @@ export default function MiniMenu() {
               </motion.button>
             ))}
 
-            {/* Theme Toggle Button */}
+            {/* Botón para cambiar el tema */}
             <motion.button 
               onClick={toggleDarkMode} 
               className="block w-full mt-4 p-2 rounded-lg transition-all"

@@ -12,13 +12,11 @@ import {
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function MortalChart() {
   const { darkMode } = useDarkMode();
 
-  
   const causes = [
     "Enfermedades del corazón",
     "Tumores malignos",
@@ -35,9 +33,7 @@ export default function MortalChart() {
 
   const deaths = [32105, 25199, 11222, 9200, 5818, 3930, 2852, 2281, 1795, 1671, 294];
 
-  
   const blueColor = "#c7441c";
-
 
   const chartData = {
     labels: causes,
@@ -51,9 +47,8 @@ export default function MortalChart() {
     ],
   };
 
-  
   const chartOptions = {
-    indexAxis: "y", 
+    indexAxis: "y" as const,
     responsive: true,
     maintainAspectRatio: false,
     plugins: {

@@ -9,16 +9,17 @@ import {
   Title,
   Tooltip,
   Legend,
+  TooltipItem,
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function MortalidadMaterna3({ showLegend = false }) {
+export default function MortalidadMaterna3({ showLegend = false }: { showLegend?: boolean }) {
   const { darkMode } = useDarkMode();
 
   // Etiquetas y explicaciones para el tooltip
-  const labels = [
+  const labels: string[] = [
     "Embarazo Ectópico",
     "Aborto",
     "Complicaciones Puerperio",
@@ -31,7 +32,7 @@ export default function MortalidadMaterna3({ showLegend = false }) {
     "Otras Complicaciones",
   ];
 
-  const explanations = {
+  const explanations: Record<string, string> = {
     "Embarazo Ectópico": "Embarazo fuera de la placenta, generalmente en las trompas de Falopio.",
     "Aborto": "Interrupción del embarazo, ya sea espontánea o inducida.",
     "Complicaciones Puerperio": "Problemas médicos tras el parto, como infecciones o hemorragias.",
@@ -45,15 +46,15 @@ export default function MortalidadMaterna3({ showLegend = false }) {
   };
 
   // Datos originales
-  const rawData = [2, 1, 8, 4, 3, 1, 1, 4, 4, 2];
+  const rawData: number[] = [2, 1, 8, 4, 3, 1, 1, 4, 4, 2];
 
-  // Combinar etiquetas y valores para ordenarlos por valor (descendente)
+  // Combinar etiquetas y valores para ordenarlos de mayor a menor
   const combined = labels.map((label, index) => ({ label, value: rawData[index] }));
-  combined.sort((a, b) => b.value - a.value); // Orden descendente (mayor a menor)
+  combined.sort((a, b) => b.value - a.value);
 
-  // Extraer etiquetas y valores ya ordenados
-  const sortedLabels = combined.map((item) => item.label);
-  const sortedValues = combined.map((item) => item.value);
+  // Extraer etiquetas y valores ordenados
+  const sortedLabels: string[] = combined.map((item) => item.label);
+  const sortedValues: number[] = combined.map((item) => item.value);
 
   // Ajuste para que las barras no lleguen al borde máximo
   const maxValue = Math.max(...sortedValues) + 1;
@@ -65,50 +66,58 @@ export default function MortalidadMaterna3({ showLegend = false }) {
       {
         label: showLegend ? "Defunciones 2023" : "",
         data: sortedValues,
-        // Todas las barras en color azul
         backgroundColor: "#c7441c",
       },
     ],
   };
 
-  
+  // Opciones del gráfico tipadas de forma que se ajuste a Chart.js
   const options = {
-    indexAxis: "y", 
+    indexAxis: "y" as const,
     responsive: true,
     maintainAspectRatio: false,
     scales: {
       x: {
+        // Para una barra horizontal, el eje x es lineal
+        type: "linear" as const,
         ticks: { color: darkMode ? "white" : "black" },
         suggestedMax: maxValue,
         title: {
           display: true,
           text: "Defunciones Totales",
           color: darkMode ? "white" : "black",
-          font: { size: 14 },
+          font: { size: 14, weight: "bold" as const } as const,
         },
       },
       y: {
+        // El eje y es de tipo 'category'
+        type: "category" as const,
         ticks: {
           color: darkMode ? "white" : "black",
-          callback: function (value, index) {
-           
-            return sortedLabels[index];
-          },
+          callback: (_value: unknown, index: number): string => sortedLabels[index],
         },
       },
     },
     plugins: {
-      legend: { display: showLegend, labels: { color: darkMode ? "white" : "black" } },
+      legend: {
+        display: showLegend,
+        labels: { color: darkMode ? "white" : "black" },
+      },
       tooltip: {
         callbacks: {
-          title: function (tooltipItems) {
-            return explanations[tooltipItems[0].label] || tooltipItems[0].label;
+          title: (tooltipItems: TooltipItem<"bar">[]): string => {
+            const item = tooltipItems[0];
+            return explanations[item.label] || item.label;
           },
-          label: function () {
-            
-            return "";
-          },
+          label: (): string => "",
         },
+      },
+      title: {
+        display: true,
+        text: "Causas Directas de Mortalidad Materna",
+        font: { size: 16, weight: "bold" as const } as const,
+        align: "center" as const,
+        color: darkMode ? "white" : "black",
       },
     },
   };

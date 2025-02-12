@@ -83,8 +83,7 @@ export default function LifeExpectancyChart() {
           });
         }
 
-        // Una vez terminada la lectura de todos los archivos,
-        // convertimos el set en array y ordenamos alfabéticamente.
+        // Convertir el set en array y ordenar alfabéticamente.
         setAvailableCountries(Array.from(combinedCountries).sort());
         setLoading(false);
       } catch (error) {
@@ -151,6 +150,7 @@ export default function LifeExpectancyChart() {
     return generateChartData(dataset);
   };
 
+  // Opciones del gráfico
   const chartOptions = (title: string) => ({
     responsive: true,
     maintainAspectRatio: false,
@@ -159,14 +159,14 @@ export default function LifeExpectancyChart() {
         title: {
           display: true,
           text: "Años",
-          font: { size: 14, weight: "bold" },
+          font: { size: 14, weight: "bold" } as const,
           color: darkMode ? "#FFFFFF" : "#000000",
         },
         ticks: {
           color: darkMode ? "#FFFFFF" : "#000000",
-          font: { size: 12 },
+          font: { size: 12 } as const,
           rotation: 0,
-          align: "center",
+          align: "center" as const,
         },
         grid: { display: false },
       },
@@ -174,7 +174,7 @@ export default function LifeExpectancyChart() {
         title: {
           display: true,
           text: title,
-          font: { size: 14, weight: "bold" },
+          font: { size: 14, weight: "bold" } as const,
           color: darkMode ? "#FFFFFF" : "#000000",
         },
         beginAtZero: false,
@@ -190,8 +190,8 @@ export default function LifeExpectancyChart() {
       title: {
         display: true,
         text: title,
-        font: { size: 16, weight: "bold" },
-        align: "center",
+        font: { size: 16, weight: "bold" } as const,
+        align: "center" as const,
         color: darkMode ? "#FFFFFF" : "#000000",
       },
     },
@@ -203,8 +203,12 @@ export default function LifeExpectancyChart() {
       <div className="flex-1 flex flex-col gap-8">
         {/* Selector para el tipo de Supervivencia */}
         <div className="mb-4">
-          <label className="mr-2 font-bold">Tipo de Supervivencia:</label>
+          <label className="mr-2 font-bold" htmlFor="survival-type">
+            Tipo de Supervivencia:
+          </label>
           <select
+            id="survival-type"
+            aria-label="Tipo de Supervivencia"
             value={selectedSurvivalType}
             onChange={(e) =>
               setSelectedSurvivalType(

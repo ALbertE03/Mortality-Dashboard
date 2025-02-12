@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Chart } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,25 +10,33 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartData,
+  ChartOptions
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function ETSChart() {
   const { darkMode } = useDarkMode();
   const [isClient, setIsClient] = useState(false);
 
-  
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  if (!isClient) return null; 
+  if (!isClient) return null;
 
-  
+  // Datos históricos de ETS
   const etsdData = [
     { year: 1970, sífilis: 619, blenorragia: 238, condiloma: 60 },
     { year: 1980, sífilis: 4346, blenorragia: 16471, condiloma: 1427 },
@@ -41,22 +49,22 @@ export default function ETSChart() {
     { year: 2023, sífilis: 8298, blenorragia: 1629, condiloma: 0 }
   ];
 
-  
+  // Datos de SIDA (formato scatter)
   const sidaData = [
     { year: 2010, cases: 764 },
     { year: 2022, cases: 394 },
     { year: 2023, cases: 319 }
   ];
 
-  
-  const labels = etsdData.map(d => d.year);
+  const labels = etsdData.map((d) => d.year);
 
-  const data = {
+  // Definición de data para el gráfico mixto (line y scatter)
+  const data: ChartData<"line" | "scatter", (number | { x: number; y: number })[], number> = {
     labels,
     datasets: [
       {
         label: "Sífilis",
-        data: etsdData.map(d => d.sífilis),
+        data: etsdData.map((d) => d.sífilis),
         borderColor: "#E94E77",
         backgroundColor: "rgba(233, 78, 119, 0.2)",
         borderWidth: 2,
@@ -65,7 +73,7 @@ export default function ETSChart() {
       },
       {
         label: "Blenorragia",
-        data: etsdData.map(d => d.blenorragia),
+        data: etsdData.map((d) => d.blenorragia),
         borderColor: "#4A90E2",
         backgroundColor: "rgba(74, 144, 226, 0.2)",
         borderWidth: 2,
@@ -74,7 +82,7 @@ export default function ETSChart() {
       },
       {
         label: "Condiloma",
-        data: etsdData.map(d => d.condiloma),
+        data: etsdData.map((d) => d.condiloma),
         borderColor: "#F5A623",
         backgroundColor: "rgba(245, 166, 35, 0.2)",
         borderWidth: 2,
@@ -83,24 +91,25 @@ export default function ETSChart() {
       },
       {
         label: "SIDA",
-        data: sidaData.map(d => ({ x: d.year, y: d.cases })),
+        data: sidaData.map((d) => ({ x: d.year, y: d.cases })),
         borderColor: "#50E3C2",
         backgroundColor: "#50E3C2",
         pointRadius: 6,
         pointHoverRadius: 8,
         pointStyle: "circle",
+        // Se especifica el tipo "scatter" para este dataset
         type: "scatter"
       }
     ]
   };
 
-  
-  const options = {
+  const options: ChartOptions<"line" | "scatter"> = {
     responsive: true,
-    maintainAspectRatio: false, 
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top"
+        // Forzamos que sea el literal "top"
+        position: "top" as const
       },
       title: {
         display: true,
@@ -125,12 +134,16 @@ export default function ETSChart() {
   };
 
   return (
-    <div className={`w-full p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg shadow-lg ${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"}`}>
-      <h2 className="text-2xl font-semibold text-center mb-4">Incidencia de ETS en el Tiempo</h2>
-
-      {}
+    <div
+      className={`w-full p-6 border-4 border-gray-700 dark:border-gray-300 rounded-lg shadow-lg ${
+        darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"
+      }`}
+    >
+      <h2 className="text-2xl font-semibold text-center mb-4">
+        Incidencia de ETS en el Tiempo
+      </h2>
       <div className="w-full h-[500px]">
-        <Line data={data} options={options} />
+        <Chart type="line" data={data} options={options} />
       </div>
     </div>
   );

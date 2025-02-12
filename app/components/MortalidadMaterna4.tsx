@@ -9,16 +9,18 @@ import {
   Title,
   Tooltip,
   Legend,
+  type ChartOptions,
+  type TooltipItem,
 } from "chart.js";
 import { useDarkMode } from "../components/DarkModeProvider";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function MortalidadMaterna4({ showLegend = false }) {
+export default function MortalidadMaterna4({ showLegend = false }: { showLegend?: boolean }) {
   const { darkMode } = useDarkMode();
 
   // Etiquetas y explicaciones para el tooltip
-  const labels = [
+  const labels: string[] = [
     "Enfermedades Cardiovasculares",
     "Anemia",
     "Enfermedades Infecciosas",
@@ -26,7 +28,7 @@ export default function MortalidadMaterna4({ showLegend = false }) {
     "Otras Enfermedades",
   ];
 
-  const explanations = {
+  const explanations: Record<string, string> = {
     "Enfermedades Cardiovasculares": "Trastornos del corazón y los vasos sanguíneos, como ataques cardíacos.",
     "Anemia": "Deficiencia de glóbulos rojos o hemoglobina, reduciendo el oxígeno en la sangre.",
     "Enfermedades Infecciosas": "Infecciones crónicas que pueden afectar el sistema inmunológico y órganos vitales.",
@@ -35,51 +37,53 @@ export default function MortalidadMaterna4({ showLegend = false }) {
   };
 
   // Datos originales
-  const rawData = [4, 1, 2, 3, 1];
+  const rawData: number[] = [4, 1, 2, 3, 1];
 
   // Combinar etiquetas y valores para ordenarlos por valor (descendente)
   const combined = labels.map((label, i) => ({ label, value: rawData[i] }));
   combined.sort((a, b) => b.value - a.value);
 
   // Extraer etiquetas y valores ya ordenados
-  const sortedLabels = combined.map(item => item.label);
-  const sortedValues = combined.map(item => item.value);
+  const sortedLabels: string[] = combined.map((item) => item.label);
+  const sortedValues: number[] = combined.map((item) => item.value);
 
   // Ajuste para evitar que las barras lleguen al final exacto
   const maxValue = Math.max(...sortedValues) + 1;
 
+  // Configuración de la data para la gráfica
   const data = {
     labels: sortedLabels,
     datasets: [
       {
         label: showLegend ? "Defunciones 2023" : "",
         data: sortedValues,
-       
         backgroundColor: "#c7441c",
       },
     ],
   };
 
-  const options = {
-    indexAxis: "y", 
+  // Opciones del gráfico tipificadas como ChartOptions<"bar">
+  const options: ChartOptions<"bar"> = {
+    indexAxis: "y" as const,
     responsive: true,
     maintainAspectRatio: false,
     scales: {
       x: {
+        type: "linear" as const,
         ticks: { color: darkMode ? "white" : "black" },
         suggestedMax: maxValue,
         title: {
           display: true,
           text: "Defunciones Totales",
           color: darkMode ? "white" : "black",
-          font: { size: 14 },
+          font: { size: 14 } as const,
         },
       },
       y: {
+        type: "category" as const,
         ticks: {
           color: darkMode ? "white" : "black",
-          callback: function (value, index) {
-            
+          callback: function (tickValue: string | number, index: number): string {
             return sortedLabels[index];
           },
         },
@@ -92,14 +96,22 @@ export default function MortalidadMaterna4({ showLegend = false }) {
       },
       tooltip: {
         callbacks: {
-          title: function (tooltipItems) {
-            return explanations[tooltipItems[0].label] || tooltipItems[0].label;
+          title: function (tooltipItems: TooltipItem<"bar">[]): string {
+            const label = tooltipItems[0].label as string;
+            return explanations[label] || label;
           },
-          label: function () {
-            // Evita mostrar el valor en el tooltip (solo la explicación)
+          label: function (): string {
+            // No mostramos ningún valor en el tooltip (solo la explicación en el título)
             return "";
           },
         },
+      },
+      title: {
+        display: true,
+        text: "Causas Indirectas de Mortalidad Materna",
+        font: { size: 16, weight: "bold" as const } as const,
+        align: "center" as const,
+        color: darkMode ? "white" : "black",
       },
     },
   };
