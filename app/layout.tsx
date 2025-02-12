@@ -1,3 +1,5 @@
+"use client";
+
 import { DarkModeProvider } from "./components/DarkModeProvider"; // ✅ Corrected Import Path
 import "../styles/globals.css";
 
