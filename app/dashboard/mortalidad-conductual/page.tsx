@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import ConductualChart1 from "../../components/ConductualChart1";
-import CubaChart from "../../components/CubaChart";
-import ConductualChart from "../../components/ConductualChart";
+import CubaChart from "../../components/CubaChart"; 
+import ConductualChart from "../../components/ConductualChart"; 
 import MiniMenu from "../../components/Menu";
 
 export default function MortalidadConductual() {
@@ -36,8 +36,7 @@ export default function MortalidadConductual() {
         <strong>distracción al conducir</strong>, el <strong>consumo de alcohol</strong>{" "}
         y el <strong>uso inadecuado de medidas de seguridad</strong> contribuyen a una alta
         tasa de fallecimientos en las vías y otros entornos.
-        <br />
-        <br />
+        <br /><br />
         Analizaremos la distribución de los <strong>accidentes fatales</strong> según{" "}
         <strong>grupo de edad y género</strong>, con el fin de comprender qué poblaciones están
         en mayor riesgo y cómo pueden <strong>evitarse</strong> estos sucesos trágicos.
